@@ -4,9 +4,9 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Ross Girshick and Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import os
 from datasets.imdb import imdb
@@ -106,14 +106,14 @@ class pascal_voc(imdb):
           roidb = pickle.load(fid)
         except:
           roidb = pickle.load(fid, encoding='bytes')
-      print('{} gt roidb loaded from {}'.format(self.name, cache_file))
+      print(('{} gt roidb loaded from {}'.format(self.name, cache_file)))
       return roidb
 
     gt_roidb = [self._load_pascal_annotation(index)
                 for index in self.image_index]
     with open(cache_file, 'wb') as fid:
       pickle.dump(gt_roidb, fid, pickle.HIGHEST_PROTOCOL)
-    print('wrote gt roidb to {}'.format(cache_file))
+    print(('wrote gt roidb to {}'.format(cache_file)))
 
     return gt_roidb
 
@@ -129,7 +129,7 @@ class pascal_voc(imdb):
 
   def _load_rpn_roidb(self, gt_roidb):
     filename = self.config['rpn_file']
-    print('loading {}'.format(filename))
+    print(('loading {}'.format(filename)))
     assert os.path.exists(filename), \
       'rpn data not found at: {}'.format(filename)
     with open(filename, 'rb') as f:
@@ -202,7 +202,7 @@ class pascal_voc(imdb):
     for cls_ind, cls in enumerate(self.classes):
       if cls == '__background__':
         continue
-      print('Writing {} VOC results file'.format(cls))
+      print(('Writing {} VOC results file'.format(cls)))
       filename = self._get_voc_results_file_template().format(cls)
       with open(filename, 'wt') as f:
         for im_ind, index in enumerate(self.image_index):
@@ -232,7 +232,7 @@ class pascal_voc(imdb):
     aps = []
     # The PASCAL VOC metric changed in 2010
     use_07_metric = True if int(self._year) < 2010 else False
-    print('VOC07 metric? ' + ('Yes' if use_07_metric else 'No'))
+    print(('VOC07 metric? ' + ('Yes' if use_07_metric else 'No')))
     if not os.path.isdir(output_dir):
       os.mkdir(output_dir)
     for i, cls in enumerate(self._classes):

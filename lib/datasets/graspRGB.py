@@ -15,10 +15,10 @@ import numpy as np
 import scipy.sparse
 import scipy.io as sio
 import utils.cython_bbox
-import cPickle
+import pickle
 import subprocess
 import uuid
-from voc_eval import voc_eval
+from .voc_eval import voc_eval
 
 class graspRGB(imdb):
     def __init__(self, image_set, devkit_path):
@@ -31,7 +31,7 @@ class graspRGB(imdb):
                          'angle_06', 'angle_07', 'angle_08', 'angle_09', 'angle_10',
                          'angle_11', 'angle_12', 'angle_13', 'angle_14', 'angle_15',
                          'angle_16', 'angle_17', 'angle_18', 'angle_19')
-        self._class_to_ind = dict(zip(self.classes, xrange(self.num_classes)))
+        self._class_to_ind = dict(list(zip(self.classes, list(range(self.num_classes)))))
         self._image_ext = ['.jpg', '.png']
         self._image_index = self._load_image_set_index()
         # Default to roidb handler
@@ -95,15 +95,15 @@ class graspRGB(imdb):
         cache_file = os.path.join(self.cache_path, self.name + '_gt_roidb.pkl')
         if os.path.exists(cache_file):
             with open(cache_file, 'rb') as fid:
-                roidb = cPickle.load(fid)
-            print '{} gt roidb loaded from {}'.format(self.name, cache_file)
+                roidb = pickle.load(fid)
+            print(('{} gt roidb loaded from {}'.format(self.name, cache_file)))
             return roidb
 
         gt_roidb = [self._load_graspRGB_annotation(index)
                     for index in self.image_index]
         with open(cache_file, 'wb') as fid:
-            cPickle.dump(gt_roidb, fid, cPickle.HIGHEST_PROTOCOL)
-        print 'wrote gt roidb to {}'.format(cache_file)
+            pickle.dump(gt_roidb, fid, pickle.HIGHEST_PROTOCOL)
+        print(('wrote gt roidb to {}'.format(cache_file)))
 
         return gt_roidb
 
@@ -119,8 +119,8 @@ class graspRGB(imdb):
 
         if os.path.exists(cache_file):
             with open(cache_file, 'rb') as fid:
-                roidb = cPickle.load(fid)
-            print '{} ss roidb loaded from {}'.format(self.name, cache_file)
+                roidb = pickle.load(fid)
+            print(('{} ss roidb loaded from {}'.format(self.name, cache_file)))
             return roidb
 
         if self._image_set != 'test':
@@ -129,10 +129,10 @@ class graspRGB(imdb):
             roidb = imdb.merge_roidbs(gt_roidb, ss_roidb)
         else:
             roidb = self._load_selective_search_roidb(None)
-            print len(roidb)
+            print((len(roidb)))
 	with open(cache_file, 'wb') as fid:
-            cPickle.dump(roidb, fid, cPickle.HIGHEST_PROTOCOL)
-        print 'wrote ss roidb to {}'.format(cache_file)
+            pickle.dump(roidb, fid, pickle.HIGHEST_PROTOCOL)
+        print(('wrote ss roidb to {}'.format(cache_file)))
 
         return roidb
 
@@ -141,11 +141,11 @@ class graspRGB(imdb):
                                                 self.name + '.mat'))
         assert os.path.exists(filename), \
                'Selective search data not found at: {}'.format(filename)
-        print filename
+        print(filename)
 	raw_data = sio.loadmat(filename)['all_boxes'].ravel()
 
         box_list = []
-        for i in xrange(raw_data.shape[0]):
+        for i in range(raw_data.shape[0]):
             box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)
 
 	return self.create_roidb_from_box_list(box_list, gt_roidb)
@@ -163,16 +163,16 @@ class graspRGB(imdb):
 
         if os.path.exists(cache_file):
             with open(cache_file, 'rb') as fid:
-                roidb = cPickle.load(fid)
-            print '{} ss roidb loaded from {}'.format(self.name, cache_file)
+                roidb = pickle.load(fid)
+            print(('{} ss roidb loaded from {}'.format(self.name, cache_file)))
             return roidb
 
         gt_roidb = self.gt_roidb()
         ss_roidb = self._load_selective_search_IJCV_roidb(gt_roidb)
         roidb = datasets.imdb.merge_roidbs(gt_roidb, ss_roidb)
         with open(cache_file, 'wb') as fid:
-            cPickle.dump(roidb, fid, cPickle.HIGHEST_PROTOCOL)
-        print 'wrote ss roidb to {}'.format(cache_file)
+            pickle.dump(roidb, fid, pickle.HIGHEST_PROTOCOL)
+        print(('wrote ss roidb to {}'.format(cache_file)))
 
         return roidb
 
@@ -185,7 +185,7 @@ class graspRGB(imdb):
 
         top_k = self.config['top_k']
         box_list = []
-        for i in xrange(self.num_images):
+        for i in range(self.num_images):
             filename = os.path.join(IJCV_path, self.image_index[i] + '.mat')
             raw_data = sio.loadmat(filename)
             box_list.append((raw_data['boxes'][:top_k, :]-1).astype(np.uint16))
@@ -197,14 +197,14 @@ class graspRGB(imdb):
         Load image and bounding boxes info from txt files of graspRGB.
         """
         filename = os.path.join(self._data_path, 'Annotations', index + '.txt')
-        print 'Loading: {}'.format(filename)
+        print(('Loading: {}'.format(filename)))
 	with open(filename) as f:
             data = f.readlines()
  
         num_objs = len(data)
-        print len(data)
+        print((len(data)))
         if len(data) == 0:
-           print 'yooooooooo'
+           print('yooooooooo')
            import sys
            sys.exit()
         boxes = np.zeros((num_objs, 4), dtype=np.uint16)
@@ -227,7 +227,7 @@ class graspRGB(imdb):
 
             # if not doing this, there is negative value when bbs around boundary of image, and when it got read back, it becomes 655xx 
             if (x1<0 and x2<0) or (y1<0 and y2<0):
-               print 'yooooooooo'
+               print('yooooooooo')
                import sys
                sys.exit()
             if x1 < 0:
@@ -263,7 +263,7 @@ class graspRGB(imdb):
         for cls_ind, cls in enumerate(self.classes):
             if cls == '__background__':
                 continue
-            print 'Writing {} results file'.format(cls)
+            print(('Writing {} results file'.format(cls)))
             filename = path + 'det_' + self._image_set + '_' + cls + '.txt'
             with open(filename, 'wt') as f:
                 for im_ind, index in enumerate(self.image_index):
@@ -271,7 +271,7 @@ class graspRGB(imdb):
                     if dets == []:
                         continue
                     # the VOCdevkit expects 1-based indices
-                    for k in xrange(dets.shape[0]):
+                    for k in range(dets.shape[0]):
                         f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
                                 format(index, dets[k, -1],
                                        dets[k, 0] + 1, dets[k, 1] + 1,
@@ -289,7 +289,7 @@ class graspRGB(imdb):
         cmd += 'setenv(\'LC_ALL\',\'C\'); voc_eval(\'{:s}\',\'{:s}\',\'{:s}\',\'{:s}\',{:d}); quit;"' \
                .format(self._devkit_path, comp_id,
                        self._image_set, output_dir, int(rm_results))
-        print('Running:\n{}'.format(cmd))
+        print(('Running:\n{}'.format(cmd)))
         status = subprocess.call(cmd, shell=True)
 
     def evaluate_detections(self, all_boxes, output_dir):

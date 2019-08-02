@@ -3,9 +3,9 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
@@ -125,7 +125,7 @@ class vgg16(Network):
         self._variables_to_fix[v.name] = v
         continue
       if v.name.split(':')[0] in var_keep_dic:
-        print('Varibles restored: %s' % v.name)
+        print(('Varibles restored: %s' % v.name))
         variables_to_restore.append(v)
 
     return variables_to_restore

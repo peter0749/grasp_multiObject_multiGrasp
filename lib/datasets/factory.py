@@ -6,9 +6,9 @@
 # --------------------------------------------------------
 
 """Factory method for easily getting imdbs by name."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 from datasets.graspRGB import graspRGB
 
 __sets = {}

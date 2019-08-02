@@ -3,9 +3,9 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
@@ -323,9 +323,9 @@ class Network(object):
     val_summaries = []
     with tf.device("/cpu:0"):
       val_summaries.append(self._add_image_summary(self._image, self._gt_boxes))
-      for key, var in self._event_summaries.items():
+      for key, var in list(self._event_summaries.items()):
         val_summaries.append(tf.summary.scalar(key, var))
-      for key, var in self._score_summaries.items():
+      for key, var in list(self._score_summaries.items()):
         self._add_score_summary(key, var)
       for var in self._act_summaries:
         self._add_act_summary(var)

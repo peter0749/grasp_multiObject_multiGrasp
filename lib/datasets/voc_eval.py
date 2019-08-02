@@ -3,9 +3,9 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Bharath Hariharan
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import xml.etree.ElementTree as ET
 import os
@@ -113,10 +113,10 @@ def voc_eval(detpath,
     for i, imagename in enumerate(imagenames):
       recs[imagename] = parse_rec(annopath.format(imagename))
       if i % 100 == 0:
-        print('Reading annotation for {:d}/{:d}'.format(
-          i + 1, len(imagenames)))
+        print(('Reading annotation for {:d}/{:d}'.format(
+          i + 1, len(imagenames))))
     # save
-    print('Saving cached annotations to {:s}'.format(cachefile))
+    print(('Saving cached annotations to {:s}'.format(cachefile)))
     with open(cachefile, 'w') as f:
       pickle.dump(recs, f)
   else:

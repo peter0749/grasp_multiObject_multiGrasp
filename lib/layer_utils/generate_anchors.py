@@ -4,9 +4,9 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Ross Girshick and Sean Bell
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import numpy as np
 
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
   t = time.time()
   a = generate_anchors()
-  print(time.time() - t)
+  print((time.time() - t))
   print(a)
   from IPython import embed;
 

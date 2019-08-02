@@ -6,9 +6,9 @@
 # --------------------------------------------------------
 
 """Transform a roidb into a trainable roidb by adding a bunch of metadata."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import numpy as np
 from model.config import cfg

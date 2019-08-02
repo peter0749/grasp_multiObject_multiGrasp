@@ -4,9 +4,9 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Ross Girshick, Sean Bell and Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import numpy as np
 import numpy.random as npr

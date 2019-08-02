@@ -3,16 +3,16 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen and Zheqi He
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 from model.config import cfg
 import roi_data_layer.roidb as rdl_roidb
 from roi_data_layer.layer import RoIDataLayer
 from utils.timer import Timer
 try:
-  import cPickle as pickle
+  import pickle as pickle
 except ImportError:
   import pickle
 import numpy as np
@@ -52,7 +52,7 @@ class SolverWrapper(object):
     filename = cfg.TRAIN.SNAPSHOT_PREFIX + '_iter_{:d}'.format(iter) + '.ckpt'
     filename = os.path.join(self.output_dir, filename)
     self.saver.save(sess, filename)
-    print('Wrote snapshot to: {:s}'.format(filename))
+    print(('Wrote snapshot to: {:s}'.format(filename)))
 
     # Also store some meta information, random state, etc.
     nfilename = cfg.TRAIN.SNAPSHOT_PREFIX + '_iter_{:d}'.format(iter) + '.pkl'
@@ -85,7 +85,7 @@ class SolverWrapper(object):
       var_to_shape_map = reader.get_variable_to_shape_map()
       return var_to_shape_map 
     except Exception as e:  # pylint: disable=broad-except
-      print(str(e))
+      print((str(e)))
       if "corrupted compressed block contents" in str(e):
         print("It's likely that your checkpoint file has been compressed "
               "with SNAPPY.")
@@ -155,7 +155,7 @@ class SolverWrapper(object):
 
     if lsf == 0:
       # Fresh train directly from ImageNet weights
-      print('Loading initial model weights from {:s}'.format(self.pretrained_model))
+      print(('Loading initial model weights from {:s}'.format(self.pretrained_model)))
       variables = tf.global_variables()
       # Initialize all variables first
       sess.run(tf.variables_initializer(variables, name='init'))
@@ -178,7 +178,7 @@ class SolverWrapper(object):
       ss_paths = [ss_paths[-1]]
       np_paths = [np_paths[-1]]
 
-      print('Restorining model snapshots from {:s}'.format(sfiles[-1]))
+      print(('Restorining model snapshots from {:s}'.format(sfiles[-1])))
       self.saver.restore(sess, str(sfiles[-1]))
       print('Restored.')
       # Needs to restore the other hyperparameters/states for training, (TODO xinlei) I have
@@ -240,10 +240,10 @@ class SolverWrapper(object):
 
       # Display training information
       if iter % (cfg.TRAIN.DISPLAY) == 0:
-        print('iter: %d / %d, total loss: %.6f\n >>> rpn_loss_cls: %.6f\n '
+        print(('iter: %d / %d, total loss: %.6f\n >>> rpn_loss_cls: %.6f\n '
               '>>> rpn_loss_box: %.6f\n >>> loss_cls: %.6f\n >>> loss_box: %.6f\n >>> lr: %f' % \
-              (iter, max_iters, total_loss, rpn_loss_cls, rpn_loss_box, loss_cls, loss_box, lr.eval()))
-        print('speed: {:.3f}s / iter'.format(timer.average_time))
+              (iter, max_iters, total_loss, rpn_loss_cls, rpn_loss_box, loss_cls, loss_box, lr.eval())))
+        print(('speed: {:.3f}s / iter'.format(timer.average_time)))
 
       if iter % cfg.TRAIN.SNAPSHOT_ITERS == 0:
         last_snapshot_iter = iter
@@ -317,8 +317,8 @@ def filter_roidb(roidb):
   num = len(roidb)
   filtered_roidb = [entry for entry in roidb if is_valid(entry)]
   num_after = len(filtered_roidb)
-  print('Filtered {} roidb entries: {} -> {}'.format(num - num_after,
-                                                     num, num_after))
+  print(('Filtered {} roidb entries: {} -> {}'.format(num - num_after,
+                                                     num, num_after)))
   return filtered_roidb
 
 

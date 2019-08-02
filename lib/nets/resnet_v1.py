@@ -3,9 +3,9 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Zheqi He and Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
@@ -97,40 +97,53 @@ class resnetv1(Network):
     else:
       initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
       initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
-    bottleneck = resnet_v1.bottleneck
+    # bottleneck = resnet_v1.bottleneck
+    resnet_v1_block = resnet_v1.resnet_v1_block
     # choose different blocks for different number of layers
     if self._num_layers == 50:
       blocks = [
-        resnet_utils.Block('block1', bottleneck,
-                           [(256, 64, 1)] * 2 + [(256, 64, 2)]),
-        resnet_utils.Block('block2', bottleneck,
-                           [(512, 128, 1)] * 3 + [(512, 128, 2)]),
+        #resnet_utils.Block('block1', bottleneck,
+        #                   [(256, 64, 1)] * 2 + [(256, 64, 2)]),
+        #resnet_utils.Block('block2', bottleneck,
+        #                   [(512, 128, 1)] * 3 + [(512, 128, 2)]),
         # Use stride-1 for the last conv4 layer
-        resnet_utils.Block('block3', bottleneck,
-                           [(1024, 256, 1)] * 5 + [(1024, 256, 1)]),
-        resnet_utils.Block('block4', bottleneck, [(2048, 512, 1)] * 3)
+        #resnet_utils.Block('block3', bottleneck,
+        #                   [(1024, 256, 1)] * 5 + [(1024, 256, 1)]),
+        #resnet_utils.Block('block4', bottleneck, [(2048, 512, 1)] * 3)
+        resnet_v1_block('block1', base_depth=64, num_units=3, stride=2),
+        resnet_v1_block('block2', base_depth=128, num_units=4, stride=2),
+        resnet_v1_block('block3', base_depth=256, num_units=6, stride=1),
+        resnet_v1_block('block4', base_depth=512, num_units=3, stride=1),
       ]
     elif self._num_layers == 101:
       blocks = [
-        resnet_utils.Block('block1', bottleneck,
-                           [(256, 64, 1)] * 2 + [(256, 64, 2)]),
-        resnet_utils.Block('block2', bottleneck,
-                           [(512, 128, 1)] * 3 + [(512, 128, 2)]),
+        #resnet_utils.Block('block1', bottleneck,
+        #                   [(256, 64, 1)] * 2 + [(256, 64, 2)]),
+        #resnet_utils.Block('block2', bottleneck,
+        #                   [(512, 128, 1)] * 3 + [(512, 128, 2)]),
         # Use stride-1 for the last conv4 layer
-        resnet_utils.Block('block3', bottleneck,
-                           [(1024, 256, 1)] * 22 + [(1024, 256, 1)]),
-        resnet_utils.Block('block4', bottleneck, [(2048, 512, 1)] * 3)
+        #resnet_utils.Block('block3', bottleneck,
+        #                   [(1024, 256, 1)] * 22 + [(1024, 256, 1)]),
+        #resnet_utils.Block('block4', bottleneck, [(2048, 512, 1)] * 3)
+        resnet_v1_block('block1', base_depth=64, num_units=3, stride=2),
+        resnet_v1_block('block2', base_depth=128, num_units=4, stride=2),
+        resnet_v1_block('block3', base_depth=256, num_units=23, stride=1),
+        resnet_v1_block('block4', base_depth=512, num_units=3, stride=1),
       ]
     elif self._num_layers == 152:
       blocks = [
-        resnet_utils.Block('block1', bottleneck,
-                           [(256, 64, 1)] * 2 + [(256, 64, 2)]),
-        resnet_utils.Block('block2', bottleneck,
-                           [(512, 128, 1)] * 7 + [(512, 128, 2)]),
+        #resnet_utils.Block('block1', bottleneck,
+        #                   [(256, 64, 1)] * 2 + [(256, 64, 2)]),
+        #resnet_utils.Block('block2', bottleneck,
+        #                   [(512, 128, 1)] * 7 + [(512, 128, 2)]),
         # Use stride-1 for the last conv4 layer
-        resnet_utils.Block('block3', bottleneck,
-                           [(1024, 256, 1)] * 35 + [(1024, 256, 1)]),
-        resnet_utils.Block('block4', bottleneck, [(2048, 512, 1)] * 3)
+        #resnet_utils.Block('block3', bottleneck,
+        #                   [(1024, 256, 1)] * 35 + [(1024, 256, 1)]),
+        #resnet_utils.Block('block4', bottleneck, [(2048, 512, 1)] * 3)
+        resnet_v1_block('block1', base_depth=64, num_units=3, stride=2),
+        resnet_v1_block('block2', base_depth=128, num_units=8, stride=2),
+        resnet_v1_block('block3', base_depth=256, num_units=36, stride=1),
+        resnet_v1_block('block4', base_depth=512, num_units=3, stride=1),
       ]
     else:
       # other numbers are not supported
@@ -257,7 +270,7 @@ class resnetv1(Network):
         #  or v.name == 'resnet_v1_50/bbox_pred/biases:0':
         #  continue
 
-        print('Varibles restored: %s' % v.name)
+        print(('Varibles restored: %s' % v.name))
         variables_to_restore.append(v)
 
     return variables_to_restore
@@ -271,5 +284,5 @@ class resnetv1(Network):
         restorer_fc = tf.train.Saver({self._resnet_scope + "/conv1/weights": conv1_rgb})
         restorer_fc.restore(sess, pretrained_model)
 
-        sess.run(tf.assign(self._variables_to_fix[self._resnet_scope + '/conv1/weights:0'], 
+        sess.run(tf.assign(self._variables_to_fix[self._resnet_scope + '/conv1/weights:0'],
                            tf.reverse(conv1_rgb, [2])))
