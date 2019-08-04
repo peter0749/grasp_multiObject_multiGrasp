@@ -37,6 +37,7 @@ def preprocess(rgb, depth):
     depth -= depth.min()
     depth  = np.round(depth / depth.max() * 255).clip(0,255).astype(np.uint8)
     x[...,-1] = depth # RGB -> RGD
+    x = x[...,::-1]   # RGD -> DGR
     return x
 
 pi     = scipy.pi
